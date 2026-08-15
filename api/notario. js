@@ -1,0 +1,47 @@
+// api/notario.js - VALDOVINOS VAULT V24 - FINAL V3 CELULAR
+
+module.exports = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Para que lo puedas probar desde el navegador en tu cel
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      status: 'BOVEDA-V24-ONLINE',
+      mensaje: 'Manda POST con {payload} para sellar',
+      ejemplo: { cliente: 'TJ-001', referencia: 'LOTE-123', payload: { sku: 'ABC' } }
+    });
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Usa POST' });
+  }
+
+  try {
+    const crypto = require('crypto');
+    const body = req.body || {};
+    const payload = body.payload || body;
+
+    const timestamp = new Date().toISOString();
+    const hash = crypto.createHash('sha256')
+      .update(JSON.stringify(payload))
+      .digest('hex');
+
+    return res.status(200).json({
+      selloId: `V24-${Date.now()}-${hash.substring(0,8).toUpperCase()}`,
+      cliente: body.cliente || 'DEMO-TJ',
+      referencia: body.referencia || 'REF-001',
+      timestamp,
+      hashContenido: hash,
+      raizBoveda: '0xad60f9503c9dbd82dc0a5f7f5a06cf40f3ff5c3bff1c0aae4d9d13c7e44e2f3c',
+      estado: 'SELLADO-PRIVADO-V24-OK',
+      disclaimer: 'Sello privado interno. No es documento oficial.'
+    });
+
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+};
