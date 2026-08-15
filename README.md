@@ -1,1 +1,1 @@
-# -valdovinos-cortex-v24
+# valdovinos-cortex-v24
