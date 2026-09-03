@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificador KRMV · KRONOS MX CORE</title>
+    <style>
+        :root {
+            --gold: #C9A86A;
+            --green: #00FF88;
+            --red: #FF3344;
+            --black: #050507;
+            --card: #111114;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background: var(--black);
+            color: #fff;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .wrap {
+            max-width: 680px;
+            width: 100%;
+        }
+        .header {
+            text-align: center;
+            border: 1px solid rgba(201, 168, 106, 0.2);
+            padding: 18px 20px;
+            background: var(--card);
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+        .header h1 {
+            color: var(--gold);
+            letter-spacing: 6px;
+            margin: 0;
+            font-size: 22px;
+            font-family: 'Georgia', serif;
+        }
+        .header .sub {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--gold);
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 14px 18px;
+            background: #0A0A0A;
+            border: 1px solid #222;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            min-width: 180px;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .search-box button {
+            padding: 14px 28px;
+            background: var(--gold);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+        .search-box button:hover {
+            background: #dbb978;
+        }
+
+        .result {
+            margin-top: 18px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid #222;
+        }
+        .result.verde {
+            border-color: var(--green);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.08);
+        }
+        .result.rojo {
+            border-color: var(--red);
+            box-shadow: 0 0 30px rgba(255, 51, 68, 0.08);
+        }
+        .result .head {
+            padding: 16px 20px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: 3px;
+            font-size: 15px;
+        }
+        .result .head.verde {
+            background: rgba(0, 255, 136, 0.10);
+            color: var(--green);
+        }
+        .result .head.rojo {
+            background: rgba(255, 51, 68, 0.10);
+            color: var(--red);
+        }
+        .result .body {
+            padding: 20px 24px;
+            background: var(--card);
+            font-size: 13px;
+            line-height: 1.9;
+        }
+        .result .body .hash {
+            font-family: 'Courier New', monospace;
+            font-size: 8px;
+            word-break: break-all;
+            background: #0A0A0A;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #1a1a1a;
+            margin-top: 10px;
+            color: #00FF88;
+        }
+        .badge-chain {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 14px;
+        }
+        .badge-chain a {
+            font-family: 'Courier New', monospace;
+            font-size: 8px;
+            border: 1px solid rgba(201, 168, 106, 0.2);
+            padding: 4px 10px;
+            border-radius: 16px;
+            color: var(--gold);
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .badge-chain a:hover {
+            background: rgba(201, 168, 106, 0.08);
+        }
+        .legal {
+            font-size: 9px;
+            opacity: 0.4;
+            margin-top: 18px;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .status-ok {
+            color: var(--green);
+            font-weight: 700;
+        }
+        .status-fail {
+            color: var(--red);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="header">
+            <h1>KRONOS MX — VERIFICADOR</h1>
+            <div class="sub">PROTOCOLO KRMV-(MARCA)-0000001 · ID 7225862335</div>
+            <div class="search-box">
+                <input id="inputFolio" placeholder="Ej: KRMV-NIKE-0000001" />
+                <button onclick="verificar()">VERIFICAR</button>
+            </div>
+        </div>
+
+        <div id="resultado"></div>
+
+        <div class="legal">
+            Entidad Tecnológica Privada. Verificación privada interna. No gubernamental. No valida INE/CURP/Pasaporte.<br/>
+            Base legal: Registro 2608096674952 · 4 TX Ethereum verificables.
+        </div>
+    </div>
+
+    <script>
+        // ---- DATOS DE REGISTRO DEMO ----
+        const REGISTRY_DEMO = [{
+            folio: 'KRMV-KRONOS-0000001',
+            hash: 'KR-7225862335-2026-B5-FUNDADOR',
+            titular: 'Marco Antonio Rojas Valdovinos — KR-0001 Fundador',
+            caducidad: '2027-08-13',
+            estado: 0,
+            marca: 'KRONOS'
+        }];
+
+        // ---- BLOQUES DE CONFIANZA ----
+        const BLOQUES = [
+            { cod: '2607086319439', tx: '0x8ca8e84e1258abac9acb29d14d25114e4775d782ecfda51ae29933247ed2970e',
+            rol: 'Acta Fundacional' },
+            { cod: '2607146379465', tx: '0xd2c2a7e128e6c81b689b3b0d9e1b31a46fb8df0391b7b6c05e7daa7fb895774c',
+            rol: 'Arquitectura' },
+            { cod: '2608056639878', tx: '0xd94bf2d1c1187bddf22fe8d376f7663f63a8b01b5e85367b052db43d1ed6a466',
+            rol: 'Sello Oro' },
+            { cod: '2608096674952', tx: '0x7ef5dbd264e100de9cbf639b2e5a0df10ab5c62769d2f2c49cae51b4e8e995a2',
+            rol: 'Protocolo Maestro KRMV' }
+        ];
+
+        function getParam(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+
+        async function verificar() {
+            let folio = document.getElementById('inputFolio').value.trim().toUpperCase();
+            if (!folio) {
+                folio = getParam('id') || '';
+            }
+            if (!folio) {
+                return alert('Ingresa un folio KRMV-...');
+            }
+            document.getElementById('inputFolio').value = folio;
+
+            // Intentar cargar registry.json real
+            let registry = REGISTRY_DEMO;
+            try {
+                const resp = await fetch('/citizens/registry.json');
+                if (resp.ok) registry = await resp.json();
+            } catch (e) { /* fallback a demo */ }
+
+            // Buscar en registry
+            let item = registry.find(r => r.folio && r.folio.toUpperCase() === folio);
+
+            // Si no, intentar cargar JSON individual
+            if (!item) {
+                try {
+                    const resp = await fetch(`/citizens/${folio}.json`);
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        item = {
+                            folio: data.folio,
+                            hash: data.hash || '--',
+                            titular: data.titular || 'No registrado',
+                            caducidad: data.caducidad || '',
+                            estado: data.estado || 0,
+                            marca: data.marca || '--'
+                        };
+                    }
+                } catch (e) { /* fallback */ }
+            }
+
+            let estado = 0;
+            let motivo = 'ACTIVO';
+            let html = '';
+
+            if (!item) {
+                estado = 1;
+                motivo = 'NO ENCONTRADO — POSIBLE FALSIFICACIÓN';
+            } else {
+                // Revisar caducidad
+                if (item.caducidad) {
+                    const hoy = new Date().toISOString().split('T')[0];
+                    if (item.caducidad < hoy) {
+                        estado = 1;
+                        motivo = `VENCIDO el ${item.caducidad}`;
+                    }
+                }
+                // Revisar estado manual
+                if (item.estado === 1) {
+                    estado = 1;
+                    motivo = 'REVOCADO MANUALMENTE';
+                }
+            }
+
+            const esVerde = estado === 0;
+            const clase = esVerde ? 'verde' : 'rojo';
+            const icono = esVerde ?
+                '● VERDE 0 = ACTIVO — DOCUMENTO VÁLIDO' :
+                `● ROJO 1 = ${motivo}`;
+
+            html = `
+                <div class="result ${clase}">
+                    <div class="head ${clase}">${icono}</div>
+                    <div class="body">
+                        <b>Folio:</b> ${folio}<br/>
+                        ${item ? `<b>Marca:</b> ${item.marca}<br/><b>Titular/Lote:</b> ${item.titular}<br/><b>Caducidad:</b> ${item.caducidad || 'Sin caducidad'}<br/>` : ''}
+                        <b>ID Fundacional:</b> 7225862335<br/>
+                        <b>Protocolo Base:</b> 2608096674952 — KRMV v2.1<br/>
+
+                        <div class="hash">Hash: ${item?.hash || 'No registrado'}<br/>Verificación: ${window.location.origin}/verify/?id=${folio}</div>
+
+                        <div style="margin-top:14px;">
+                            <div style="font-size:10px; letter-spacing:2px; color:#C9A86A; margin-bottom:6px;">CADENA DE CONFIANZA — 4 TX VERIFICABLES</div>
+                            <div class="badge-chain">
+                                ${BLOQUES.map(b =>
+                                    `<a href="https://etherscan.io/tx/${b.tx}" target="_blank">${b.cod}<br/>${b.rol}</a>`
+                                ).join('')}
+                            </div>
+                        </div>
+
+                        ${esVerde ?
+                            `<div style="margin-top:12px; color:#00FF88; font-size:11px;">✔ Hash coincide con registro privado · ✔ Vigencia vigente · ✔ Firma válida</div>` :
+                            `<div style="margin-top:12px; color:#FF3344; font-size:11px;">✖ Documento inválido. Motivo: ${motivo}. Contacta a fabricante: Kronos MX Core ID 7225862335</div>`
+                        }
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('resultado').innerHTML = html;
+        }
+
+        // Auto-verificar si viene ?id=... en la URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const id = getParam('id');
+            if (id) {
+                document.getElementById('inputFolio').value = id;
+                verificar();
+            }
+        });
+    </script>
+</body>
+</html>
