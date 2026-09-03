@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Fábrica KRMV • KRONOS MX CORE v2.1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --gold: #C9A86A;
+            --bg: #050507;
+            --card: #111114;
+            --text: #EEEEEE;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(201, 168, 106, 0.25);
+            border-radius: 16px;
+            padding: 28px;
+        }
+        h2 {
+            color: var(--gold);
+            letter-spacing: 4px;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .sub {
+            font-size: 12px;
+            opacity: 0.6;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--gold);
+            margin: 16px 0 6px;
+            text-transform: uppercase;
+        }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0A0A0A;
+            border: 1px solid #222;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 18px;
+            background: var(--gold);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn:hover {
+            background: #dbb978;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn.ghost {
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+        .btn.ghost:hover {
+            background: rgba(201, 168, 106, 0.08);
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+        .btn-group .btn {
+            width: 50%;
+        }
+        .preview {
+            background: #FFFEF9;
+            color: #1a1a1a;
+            padding: 28px;
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            font-family: 'Georgia', serif;
+            min-height: 520px;
+            position: relative;
+        }
+        .preview .folio {
+            font-family: 'Courier New', monospace;
+            font-size: 22px;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-align: center;
+            margin: 10px 0 16px;
+            font-weight: 700;
+        }
+        .preview .detail {
+            font-size: 13px;
+            line-height: 1.8;
+            margin: 6px 0;
+        }
+        .preview .qrbox {
+            width: 140px;
+            height: 140px;
+            margin: 16px auto;
+            background: #fff;
+            border: 1px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .preview .qrbox img {
+            width: 100%;
+            height: 100%;
+        }
+        .preview .status {
+            text-align: center;
+            font-size: 12px;
+            letter-spacing: 3px;
+            margin-top: 12px;
+            color: #00AA55;
+            font-weight: 700;
+        }
+        .preview .legal {
+            font-size: 8px;
+            opacity: 0.5;
+            text-align: center;
+            margin-top: 16px;
+            border-top: 1px solid #ddd;
+            padding-top: 12px;
+            line-height: 1.6;
+        }
+        .hash-output {
+            font-family: 'Courier New', monospace;
+            font-size: 9px;
+            word-break: break-all;
+            background: #0A0A0A;
+            color: #00FF88;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #1a1a1a;
+            margin-top: 16px;
+            max-height: 160px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        .badge {
+            display: inline-block;
+            font-size: 8px;
+            padding: 2px 8px;
+            border: 1px solid rgba(201, 168, 106, 0.2);
+            border-radius: 12px;
+            color: var(--gold);
+            margin-right: 4px;
+        }
+        @media print {
+            .btn,
+            .btn-group,
+            .hash-output {
+                display: none;
+            }
+            .preview {
+                border: none;
+                box-shadow: none;
+                padding: 20px;
+            }
+            body {
+                background: #fff;
+                padding: 0;
+            }
+            .container {
+                display: block;
+            }
+            .card {
+                border: none;
+                background: transparent;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+        <div class="card">
+            <h2>FÁBRICA KRMV</h2>
+            <div class="sub">Protocolo base 2608096674952 • ID 7225862335</div>
+
+            <label>MARCA (ej: KRONOS, NIKE)</label>
+            <input id="marca" value="KRONOS" />
+
+            <label>TITULAR / LOTE (persona o lote)</label>
+            <input id="titular" placeholder="Ej: Juan Pérez / Lote Textil A1" />
+
+            <label>FABRICANTE / ORIGEN</label>
+            <input id="fabricante" value="Kronos MX Core — ID 7225862335" />
+
+            <label>EMISIÓN</label>
+            <input id="emision" type="date" />
+
+            <label>CADUCIDAD / VIGENCIA</label>
+            <input id="caducidad" type="date" />
+
+            <label>CORRELATIVO (auto-incrementa)</label>
+            <input id="correlativo" type="number" value="1" />
+
+            <button class="btn" onclick="generarKRMV()">⚡ GENERAR KRMV</button>
+
+            <div class="btn-group">
+                <button class="btn ghost" onclick="descargarJSON()">📥 JSON</button>
+                <button class="btn ghost" onclick="descargarPDF()">📄 PDF</button>
+            </div>
+
+            <div class="hash-output" id="hashOut">Esperando generación...</div>
+        </div>
+
+        <!-- COLUMNA DERECHA: VISTA PREVIA -->
+        <div class="card">
+            <div class="preview" id="preview">
+                <div style="text-align:center; border-bottom:2px solid #C9A86A; padding-bottom:12px; margin-bottom:14px;">
+                    <b style="letter-spacing:5px; color:#C9A86A; font-size:18px;">KRONOS MX CORE</b>
+                    <br/><span style="font-size:11px; letter-spacing:3px;">CONSTANCIA PRIVADA KRMV</span>
+                </div>
+
+                <div class="folio" id="pFolio">KRMV-MARCA-0000001</div>
+
+                <div class="detail"><b>Marca:</b> <span id="pMarca">—</span></div>
+                <div class="detail"><b>Titular/Lote:</b> <span id="pTitular">—</span></div>
+                <div class="detail"><b>Fabricante:</b> <span id="pFabricante">—</span></div>
+                <div class="detail"><b>Emisión:</b> <span id="pEmision">—</span></div>
+                <div class="detail"><b>Vigencia:</b> <span id="pCaducidad">—</span></div>
+                <div class="detail" style="font-size:11px; opacity:0.7;">
+                    <b>Protocolo Base:</b> 2608096674952
+                </div>
+                <div class="detail" style="font-size:10px; font-family:monospace; opacity:0.6; word-break:break-all;">
+                    <b>TX Base:</b> 0x7ef5dbd264e100de9cbf639b2e5a0df10ab5c62769d2f2c49cae51b4e8e995a2
+                </div>
+
+                <div class="qrbox" id="qrContainer"></div>
+
+                <div class="status" id="pStatus">● VERDE 0 = ACTIVO — ID 7225862335</div>
+
+                <div class="legal">
+                    Documento privado de membresía/lote. Sin validez oficial gubernamental.<br/>
+                    Verificación en <b>/verify/?id=KRMV-...</b> + Hash SHA256.<br/>
+                    Entidad Tecnológica Privada Kronos MX Core.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ---- CONFIGURACIÓN INICIAL ----
+        const fechaHoy = new Date();
+        document.getElementById('emision').valueAsDate = fechaHoy;
+        const caducidad = new Date(fechaHoy);
+        caducidad.setFullYear(caducidad.getFullYear() + 1);
+        document.getElementById('caducidad').valueAsDate = caducidad;
+
+        // Cargar correlativo desde localStorage
+        let contador = parseInt(localStorage.getItem('krmv_contador')) || 1;
+        document.getElementById('correlativo').value = contador;
+
+        // ---- VARIABLES GLOBALES ----
+        let ultimoPayload = null;
+        let ultimoHash = null;
+
+        // ---- GENERAR KRMV ----
+        async function generarKRMV() {
+            const marcaRaw = document.getElementById('marca').value.trim();
+            const marca = marcaRaw.toUpperCase().replace(/[^A-Z0-9]/g, '') || 'KRONOS';
+
+            const corrNum = parseInt(document.getElementById('correlativo').value) || 1;
+            const folio = `KRMV-${marca}-${String(corrNum).padStart(7, '0')}`;
+
+            const payload = {
+                folio: folio,
+                marca: marca,
+                titular: document.getElementById('titular').value.trim() || 'Titular Privado',
+                fabricante: document.getElementById('fabricante').value.trim() || 'Kronos MX Core',
+                emision: document.getElementById('emision').value || fechaHoy.toISOString().split('T')[0],
+                caducidad: document.getElementById('caducidad').value || '',
+                estado: 0,
+                estado_txt: 'VERDE 0 = ACTIVO',
+                id_fundacional: '7225862335',
+                protocolo_base: '2608096674952',
+                tx_base: '0x7ef5dbd264e100de9cbf639b2e5a0df10ab5c62769d2f2c49cae51b4e8e995a2',
+                bloques: ['2607086319439', '2607146379465', '2608056639878', '2608096674952'],
+                version: 'KRMV v2.1'
+            };
+
+            // Calcular hash SHA-256
+            const encoder = new TextEncoder();
+            const data = encoder.encode(JSON.stringify(payload));
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            ultimoPayload = payload;
+            ultimoHash = hash;
+
+            // Actualizar vista previa
+            document.getElementById('pFolio').textContent = folio;
+            document.getElementById('pMarca').textContent = marca;
+            document.getElementById('pTitular').textContent = payload.titular;
+            document.getElementById('pFabricante').textContent = payload.fabricante;
+            document.getElementById('pEmision').textContent = payload.emision;
+            document.getElementById('pCaducidad').textContent = payload.caducidad || 'Sin caducidad';
+
+            document.getElementById('pStatus').textContent = '● VERDE 0 = ACTIVO — ID 7225862335';
+            document.getElementById('pStatus').style.color = '#00AA55';
+
+            // Mostrar hash en consola
+            document.getElementById('hashOut').textContent =
+                `Folio: ${folio}\n` +
+                `Hash SHA256: ${hash}\n` +
+                `\n📂 Guardar como: citizens/${folio}.json\n` +
+                `📋 Agregar a registry.json:\n` +
+                `{"folio":"${folio}","hash":"${hash}","titular":"${payload.titular}","caducidad":"${payload.caducidad}","estado":0}`;
+
+            // Generar QR
+            const qrContainer = document.getElementById('qrContainer');
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: `${window.location.origin}/verify/?id=${folio}&h=${hash.substring(0, 16)}`,
+                width: 130,
+                height: 130
+            });
+
+            // Incrementar correlativo y guardar
+            const nuevoContador = corrNum + 1;
+            localStorage.setItem('krmv_contador', String(nuevoContador));
+            document.getElementById('correlativo').value = nuevoContador;
+
+            // Guardar en localStorage como respaldo
+            const registros = JSON.parse(localStorage.getItem('krmv_registros') || '[]');
+            registros.push({ folio, hash, titular: payload.titular, caducidad: payload.caducidad, estado: 0 });
+            localStorage.setItem('krmv_registros', JSON.stringify(registros));
+        }
+
+        // ---- DESCARGAR JSON ----
+        function descargarJSON() {
+            if (!ultimoPayload) return alert('Primero genera un KRMV.');
+            const data = { ...ultimoPayload, hash: ultimoHash };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${ultimoPayload.folio}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ---- DESCARGAR PDF ----
+        async function descargarPDF() {
+            if (!ultimoPayload) return alert('Primero genera un KRMV.');
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(18);
+            doc.setTextColor(201, 168, 106);
+            doc.text('KRONOS MX CORE', 20, 30);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            doc.text('CONSTANCIA PRIVADA KRMV', 20, 40);
+
+            doc.setFontSize(10);
+            doc.text(`Folio: ${ultimoPayload.folio}`, 20, 55);
+            doc.text(`Marca: ${ultimoPayload.marca}`, 20, 62);
+            doc.text(`Titular/Lote: ${ultimoPayload.titular}`, 20, 69);
+            doc.text(`Fabricante: ${ultimoPayload.fabricante}`, 20, 76);
+            doc.text(`Emisión: ${ultimoPayload.emision}  |  Vigencia: ${ultimoPayload.caducidad || 'N/A'}`, 20, 83);
+            doc.text(`Protocolo Base: ${ultimoPayload.protocolo_base}`, 20, 90);
+            doc.text(`TX Base: ${ultimoPayload.tx_base.substring(0, 30)}...`, 20, 97);
+
+            doc.setFontSize(8);
+            doc.setTextColor(50, 50, 50);
+            doc.text(`Hash SHA256: ${ultimoHash}`, 20, 110);
+
+            doc.setFontSize(7);
+            doc.setTextColor(150, 150, 150);
+            doc.text('Documento privado de membresía/lote. Sin validez oficial gubernamental.', 20, 130);
+            doc.text('Verificación en /verify/?id=' + ultimoPayload.folio, 20, 137);
+
+            doc.save(`${ultimoPayload.folio}.pdf`);
+        }
+
+        // ---- AUTO-GENERAR AL CARGAR ----
+        window.addEventListener('DOMContentLoaded', () => {
+            // Si hay datos previos en localStorage, restauramos el último folio
+            const registros = JSON.parse(localStorage.getItem('krmv_registros') || '[]');
+            if (registros.length > 0) {
+                const ultimo = registros[registros.length - 1];
+                document.getElementById('hashOut').textContent =
+                    `📋 Último registro: ${ultimo.folio}\n` +
+                    `   Hash: ${ultimo.hash.substring(0, 24)}...\n` +
+                    `   Titular: ${ultimo.titular}\n` +
+                    `   Caducidad: ${ultimo.caducidad}\n` +
+                    `   Estado: ${ultimo.estado === 0 ? 'VERDE ACTIVO' : 'ROJO REVOCADO'}`;
+            }
+
+            // Auto-generar primer folio demo si no hay nada
+            if (registros.length === 0) {
+                generarKRMV();
+            }
+        });
+    </script>
+</body>
+</html>
