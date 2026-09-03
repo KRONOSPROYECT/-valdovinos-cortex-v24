@@ -1,3 +1,39 @@
+// api/server.js - KRONOS Trust Layer V24
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  
+  const API_KEY = process.env.MODEL_API_KEY;
+  if (!API_KEY) return res.status(500).json({ error: "Falta MODEL_API_KEY en Vercel" });
+
+  const { log } = req.body;
+  if (!log) return res.status(400).json({ error: "Manda el audit_trail.log" });
+
+  try {
+    const r = await fetch("https://api.meta.ai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "muse-spark",
+        messages: [{
+          role: "user",
+          content: `Eres auditor KRONOS KRMV V24 - VALDOVINOS CORTEX. Analiza: ${log}. Genera: 1. Hash SHA-256, 2. Veredicto Valparaíso->Panamá->Róterdam, 3. % confianza. Formato para Comité.`
+        }]
+      })
+    });
+    const data = await r.json();
+    return res.status(200).json(data);
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
 // api/server.js - KRONOS V24 PARA VERCEL
 // Autor: Marco Antonio Rojas Valdovinos - ID 7225862335
 
