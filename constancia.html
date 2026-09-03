@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Constancia KR-0001 · KRMV-KRONOS-0000001</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap');
+        :root {
+            --gold: #C9A86A;
+            --paper: #FFFEF9;
+            --ink: #1a1a1a;
+            --bg: #F5F1E8;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background: var(--bg);
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+            color: var(--ink);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .hoja {
+            background: var(--paper);
+            max-width: 780px;
+            width: 100%;
+            margin: auto;
+            padding: 48px 52px 40px;
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 0 8px #fff, 0 0 0 9px var(--gold), 0 20px 50px rgba(0, 0, 0, 0.18);
+            position: relative;
+        }
+        .hoja::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 1px solid rgba(201, 168, 106, 0.2);
+            pointer-events: none;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 18px;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            letter-spacing: 7px;
+            font-size: 28px;
+            margin: 0;
+        }
+        .header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            letter-spacing: 5px;
+            margin: 6px 0 0;
+            font-weight: 400;
+        }
+        .header .idline {
+            font-size: 9px;
+            letter-spacing: 3px;
+            margin-top: 6px;
+            opacity: 0.7;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 10px 20px;
+            margin: 20px 0 24px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .grid b {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .bloques {
+            border: 1px solid rgba(201, 168, 106, 0.25);
+            padding: 14px 18px;
+            background: #FFFEF7;
+            margin: 18px 0;
+            border-radius: 4px;
+        }
+        .bloques h4 {
+            margin: 0 0 10px;
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+        .bloques .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .bloques .chip {
+            font-family: 'Courier New', monospace;
+            font-size: 8px;
+            border: 1px solid #ddd;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: #fff;
+        }
+        .bloques .chip.active {
+            background: rgba(201, 168, 106, 0.12);
+            border-color: var(--gold);
+        }
+        .estatus {
+            text-align: center;
+            background: #111;
+            color: var(--gold);
+            padding: 12px;
+            letter-spacing: 3px;
+            font-size: 12px;
+            margin: 22px 0 18px;
+            border-radius: 4px;
+        }
+        .sello {
+            border: 3px double var(--gold);
+            padding: 20px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .sello .qr {
+            width: 120px;
+            height: 120px;
+            margin: 12px auto;
+            background: #fff;
+            border: 1px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sello .qr img {
+            width: 100%;
+            height: 100%;
+        }
+        .sello .hash {
+            font-family: 'Courier New', monospace;
+            font-size: 8px;
+            word-break: break-all;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+        .legal {
+            font-size: 8px;
+            opacity: 0.5;
+            text-align: center;
+            margin-top: 24px;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+            line-height: 1.6;
+        }
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+            }
+            .hoja {
+                box-shadow: none;
+                margin: 0;
+                border: none;
+            }
+            .hoja::before {
+                display: none;
+            }
+        }
+        @media (max-width: 600px) {
+            .hoja {
+                padding: 24px 18px;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hoja">
+        <div class="header">
+            <h1>KRONOS MX CORE</h1>
+            <h2>CONSTANCIA FUNDACIONAL PRIVADA — KR-0001</h2>
+            <div class="idline">KRMV v2.1 | ID FUNDACIONAL 7225862335 | PROTOCOLO 2608096674952</div>
+        </div>
+
+        <div style="text-align:center; font-size:20px; font-weight:700; color:#C9A86A; letter-spacing:3px; font-family:'Courier New',monospace; margin:8px 0 16px;">
+            KRMV-KRONOS-0000001
+        </div>
+
+        <div class="grid">
+            <b>TITULAR</b><span>Ciudadano Fundacional Privado ID 7225862335 — Marco Antonio Rojas Valdovinos</span>
+            <b>MARCA / LOTE</b><span>KRONOS — Lote Fundacional Origen</span>
+            <b>FABRICANTE</b><span>Kronos MX Core — Toluca HQ — ID 7225862335</span>
+            <b>EMISIÓN</b><span>13 de Agosto 2026</span>
+            <b>VIGENCIA</b><span>13 de Agosto 2027 — Renovación anual</span>
+            <b>PROTOCOLO</b><span>KRMV-(MARCA)-0000001 | VERDE 0=ACTIVO / ROJO 1=REVOCADO</span>
+            <b>ESTATUS</b><span style="color:#00AA55; font-weight:700;">● VERDE 0 — FUNDADOR ORIGINARIO</span>
+        </div>
+
+        <div class="bloques">
+            <h4>cadena de confianza — 5 bloques inteligentes</h4>
+            <div class="chips">
+                <span class="chip">B1 2607086319439 — Acta — 0x8ca8...</span>
+                <span class="chip">B2 2607146379465 — Arq — 0xd2c2...</span>
+                <span class="chip">B3 2608056639878 — Sello — 0xd94b...</span>
+                <span class="chip active">B4 2608096674952 — KRMV VERDE/ROJO — 0x7ef5...</span>
+                <span class="chip active">B5 7225862335 — Constitución Unificada</span>
+            </div>
+        </div>
+
+        <div class="estatus">KR-0001 — FUNDADOR ORIGINARIO — SAFE CREATIVE REGISTRABLE — LEGADO 2099</div>
+
+        <div class="sello">
+            <b style="font-family:'Cinzel',serif; letter-spacing:3px; color:#C9A86A;">SELLO DE VERIFICACIÓN KRMV</b><br/>
+            <span style="font-size:10px; letter-spacing:2px;">ID: 7225862335 | KRMV-KRONOS-0000001</span>
+            <div class="qr" id="qrContainer"></div>
+            <div class="hash">
+                Hash: SHA256(KRMV-KRONOS-0000001 + Titular + Caducidad + Fabricante) = KR-7225862335-2026-B5<br/>
+                TX Base: 0x7ef5dbd264e100de9cbf639b2e5a0df10ab5c62769d2f2c49cae51b4e8e995a2 — Registro 2608096674952
+            </div>
+            <div style="margin-top:12px;">
+                <a href="/verify/?id=KRMV-KRONOS-0000001" style="color:#C9A86A; font-size:10px; letter-spacing:2px; text-decoration:none; border:1px solid #C9A86A; padding:6px 14px; border-radius:20px;">→ VERIFICAR EN /verify/</a>
+            </div>
+        </div>
+
+        <div class="legal">
+            Documento privado de membresía interna. Entidad Tecnológica Privada Kronos MX Core, sin afiliación gubernamental. No es identificación oficial (INE, CURP, Pasaporte) ni sustituye documentos del Estado Mexicano.<br/>
+            Verificación obligatoria en /verify/ + Etherscan + Safe Creative. Alteración invalida hash. Estado VERDE 0 vigente / ROJO 1 revocado irreversible.
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+    </script>
+    <script>
+        new QRCode(document.getElementById('qrContainer'), {
+            text: window.location.origin + '/verify/?id=KRMV-KRONOS-0000001&h=7225862335',
+            width: 110,
+            height: 110
+        });
+    </script>
+</body>
+</html>
